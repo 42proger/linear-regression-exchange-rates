@@ -2,44 +2,38 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import date, timedelta
 from exchange_rate_data.data_fetcher import get_data
+from scipy import stats
 
 def main():
     data = get_data()
     print(data)
 
     # Calculate the linear regression
-    min_date = min(data['Date'])
-    data['Date'] = [(d - min_date).days for d in data['Date']]
+    x = [i.toordinal() for i in data['Date']]
+    y = data['Rate'].values
 
-    n = len(data['Date'])
-    sum_x = data['Date'].sum()
-    sum_y = data['Rate'].sum()
-    sum_xy = (data['Date'] * data['Rate']).sum()
-    sum_x_squared = (data['Date']**2).sum()
+    slope, intercept, r, p, std_err = stats.linregress(x, y)
 
-    w1 = (n * sum_xy - sum_x * sum_y) / (n * sum_x_squared - sum_x**2)
-    w0 = (sum_y - w1 * sum_x) / n
-
-    regression = w0 + w1 * data['Date']
+    regression = [slope * x_value + intercept for x_value in x]
 
     # Calculate forecasting
-    last_day = data['Date'].max()
-    forecast = w0 + w1 * last_day
+    last_day = x[-1]
+    forecast = slope * last_day + intercept
 
     # Retrieve the real exchange rate
-    real_rate = data[data['Date'] == last_day]['Rate'].values[0]
+    real_rate = y[-1]
 
     print("Forecast:", forecast)
     print("Real Rate:", real_rate)
 
     # Plot the data and regression line
-    plt.scatter(data['Date'], data['Rate'], c='gray', label='Exchange Rates')
-    plt.plot(data['Date'], regression, c='b', label='Linear Regression')
-    plt.scatter(last_day, real_rate, c='g', label='Real Rate')
-    plt.scatter(last_day, forecast, c='r', label='Forecast')
+    x_dates = [date.fromordinal(int(x_value)) for x_value in x]
+    plt.scatter(x_dates, y, c='gray', label='Exchange Rates')
+    plt.plot(x_dates, regression, c='b', label='Linear Regression')
+    plt.scatter(x_dates[-1], real_rate, c='g', label='Real Rate')
+    plt.scatter(x_dates[-1], forecast, c='r', label='Forecast')
 
-    date_labels = [(min_date + timedelta(days=x)).strftime("%d.%m") for x in data['Date']]
-    plt.xticks(data['Date'], date_labels, rotation=45)
+    plt.xticks(x_dates, rotation=45)
 
     plt.legend()
     plt.show()
