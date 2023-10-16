@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from bs4 import BeautifulSoup
 
 def get_data():
@@ -8,7 +8,7 @@ def get_data():
     api_url = 'http://api.cba.am/exchangerates.asmx'
     iso_codes = 'USD'
     start_date = '2023-09-01'
-    end_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+    end_date = date.today().strftime("%Y-%m-%d")
 
     # Perform the POST request to the API
     request_body = f"""<?xml version="1.0" encoding="utf-8"?>
@@ -36,7 +36,7 @@ def get_data():
             data.append([rate_date, rate])
 
         # Create a DataFrame
-        df = pd.DataFrame(data, columns=['Date', 'Rate'])
+        df = pd.DataFrame(data, columns=['Date', 'Rate']).iloc[:-1]
         return df
 
     else:

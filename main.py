@@ -23,11 +23,11 @@ def main():
     regression = w0 + w1 * data['Date']
 
     # Calculate forecasting
-    yesterday = (date.today() - timedelta(days=1) - min_date).days
-    forecast = w0 + w1 * yesterday
+    last_day = data['Date'].max()
+    forecast = w0 + w1 * last_day
 
     # Retrieve the real exchange rate
-    real_rate = data[data['Date'] == yesterday]['Rate'].values[0]
+    real_rate = data[data['Date'] == last_day]['Rate'].values[0]
 
     print("Forecast:", forecast)
     print("Real Rate:", real_rate)
@@ -35,8 +35,8 @@ def main():
     # Plot the data and regression line
     plt.scatter(data['Date'], data['Rate'], c='gray', label='Exchange Rates')
     plt.plot(data['Date'], regression, c='b', label='Linear Regression')
-    plt.scatter(yesterday, real_rate, c='g', label='Real Rate')
-    plt.scatter(yesterday, forecast, c='r', label='Forecast')
+    plt.scatter(last_day, real_rate, c='g', label='Real Rate')
+    plt.scatter(last_day, forecast, c='r', label='Forecast')
 
     date_labels = [(min_date + timedelta(days=x)).strftime("%d.%m") for x in data['Date']]
     plt.xticks(data['Date'], date_labels, rotation=45)
