@@ -130,3 +130,9 @@ $`
 w_{1} = \frac{\frac{\sum\limits_{i=0}^{n}(x_{i}\sum\limits_{i=0}^{n}y_{i})}{n} - \sum\limits_{i=0}^{n}(y_{i} \ast x_{i})}{\frac{\sum\limits_{i=0}^{n}(x_{i}\sum\limits_{i=0}^{n}x_{i})}{n} - \sum\limits_{i=0}^{n}x_{i}^{2}}
 \end{aligned}
 `$
+
+---
+
+## License
+
+[MIT](https://opensource.org/licenses/MIT)
